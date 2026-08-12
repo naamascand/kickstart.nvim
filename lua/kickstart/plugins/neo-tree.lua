@@ -10,7 +10,25 @@ vim.pack.add {
 vim.keymap.set('n', '\\', '<Cmd>Neotree reveal<CR>', { desc = 'NeoTree reveal', silent = true })
 
 require('neo-tree').setup {
+  default_component_configs = {
+    git_status = {
+      -- VSCode-style letter badges instead of the default symbols
+      symbols = {
+        added = 'A',
+        modified = 'M',
+        deleted = 'D',
+        renamed = 'R',
+        untracked = 'U',
+        ignored = '',
+        unstaged = '',
+        staged = 'S',
+        conflict = 'C',
+      },
+    },
+  },
   filesystem = {
+    -- Refresh the tree automatically when files change on disk (e.g. agent edits)
+    use_libuv_file_watcher = true,
     window = {
       mappings = {
         ['\\'] = 'close_window',
