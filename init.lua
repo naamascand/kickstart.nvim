@@ -346,6 +346,9 @@ do
   vim.pack.add { gh 'NMAC427/guess-indent.nvim' }
   require('guess-indent').setup {}
 
+  -- Vim motions practice game (`:VimBeGood`)
+  vim.pack.add { gh 'ThePrimeagen/vim-be-good' }
+
   -- Here is a more advanced configuration example that passes options to `gitsigns.nvim`
   --
   -- See `:help gitsigns` to understand what each configuration key does.
@@ -540,7 +543,7 @@ do
       -- Jump to the definition of the word under your cursor.
       -- This is where a variable was first declared, or where a function is defined, etc.
       -- To jump back, press <C-t>.
-      vim.keymap.set('n', 'grd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
+      vim.keymap.set('n', 'gd', builtin.lsp_definitions, { buffer = buf, desc = '[G]oto [D]efinition' })
 
       -- Fuzzy find all the symbols in your current document.
       -- Symbols are things like variables, functions, types, etc.
@@ -701,7 +704,13 @@ do
     --    https://github.com/pmizio/typescript-tools.nvim
     --
     -- But for many setups, the LSP (`ts_ls`) will work just fine
-    -- ts_ls = {},
+    ts_ls = {},
+    eslint = {}, -- Lints and can auto-fix via the ESLint language server
+    jsonls = {}, -- Completion/validation for package.json, tsconfig.json, etc.
+    svelte = {}, -- Svelte/SvelteKit language server (handles .svelte files)
+    pyright = {}, -- Python type checking and completion
+    ruff = {}, -- Python linting and formatting
+    intelephense = {}, -- PHP language server
 
     stylua = {}, -- Used to format Lua code
 
@@ -763,6 +772,7 @@ do
   local ensure_installed = vim.tbl_keys(servers or {})
   vim.list_extend(ensure_installed, {
     -- You can add other tools here that you want Mason to install
+    'prettierd', -- Fast prettier daemon for formatting JS/TS & friends
   })
 
   require('mason-tool-installer').setup { ensure_installed = ensure_installed }
@@ -786,7 +796,12 @@ do
       -- You can specify filetypes to autoformat on save here:
       local enabled_filetypes = {
         -- lua = true,
-        -- python = true,
+        python = true,
+        javascript = true,
+        javascriptreact = true,
+        typescript = true,
+        typescriptreact = true,
+        svelte = true,
       }
       if enabled_filetypes[vim.bo[bufnr].filetype] then
         return { timeout_ms = 500 }
@@ -804,7 +819,18 @@ do
       -- python = { "isort", "black" },
       --
       -- You can use 'stop_after_first' to run the first available formatter from the list
-      -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      javascript = { 'prettierd', 'prettier', stop_after_first = true },
+      javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+      typescript = { 'prettierd', 'prettier', stop_after_first = true },
+      typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+      json = { 'prettierd', 'prettier', stop_after_first = true },
+      jsonc = { 'prettierd', 'prettier', stop_after_first = true },
+      css = { 'prettierd', 'prettier', stop_after_first = true },
+      html = { 'prettierd', 'prettier', stop_after_first = true },
+      -- Formatting .svelte files requires `prettier-plugin-svelte` in your project's devDependencies
+      svelte = { 'prettierd', 'prettier', stop_after_first = true },
+      python = { 'ruff_format' },
+      -- PHP falls back to LSP formatting via intelephense (see `default_format_opts` above)
     },
   }
 
@@ -907,7 +933,7 @@ do
   vim.pack.add { { src = gh 'nvim-treesitter/nvim-treesitter', version = 'main' } }
 
   -- Ensure basic parsers are installed
-  local parsers = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
+  local parsers = { 'bash', 'c', 'css', 'diff', 'html', 'javascript', 'jsdoc', 'json', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'php', 'phpdoc', 'python', 'query', 'svelte', 'tsx', 'typescript', 'vim', 'vimdoc' }
   require('nvim-treesitter').install(parsers)
 
   ---@param buf integer
