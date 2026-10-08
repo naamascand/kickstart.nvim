@@ -388,8 +388,11 @@ do
   vim.pack.add { gh 'folke/tokyonight.nvim' }
   ---@diagnostic disable-next-line: missing-fields
   require('tokyonight').setup {
+    transparent = true, -- Don't set a background color; use the terminal's
     styles = {
       comments = { italic = false }, -- Disable italics in comments
+      sidebars = 'transparent',
+      floats = 'transparent',
     },
   }
 
